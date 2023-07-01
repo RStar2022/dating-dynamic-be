@@ -27,8 +27,8 @@ class ProfileApi(Resource):
             id = data.id
             return {'id':str(id)}, 200
         except Exception as e:
-            messages = str(e)
-            return messages, 400
+            print(e)
+            return e, 400
 
 class ProfilesApi(Resource):
     def put(self, id):
@@ -44,12 +44,12 @@ class ProfilesApi(Resource):
             db.session.commit()
             profile.gender = body["gender"]
             db.session.commit()
-            profile.img = body["img"]
+            profile.img = body["img"].encode("utf-8")
             db.session.commit()
             return 'Update successful', 200
         except Exception as e:
-            messages = "Error for updating your data"
-            return messages, 400
+            print(e)
+            return "Unexpected exception occurred", 400
     
     def get(self, id):
         profile_info = Profile.query.filter_by(id=id).first()
