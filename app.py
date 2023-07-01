@@ -1,4 +1,5 @@
-from flask import Flask
+from flask import Flask, current_app, request, Response
+from flask_cors import CORS
 from flask_restful import Api
 from flask_migrate import Migrate
 from database.db import db
@@ -6,6 +7,7 @@ from resources.profile import ProfileApi, ProfilesApi
 from config import Config
 
 app = Flask(__name__)
+cors = CORS(app)
 app.config["DEBUG"] = True
 app.config.from_object(Config)
 
@@ -25,6 +27,12 @@ with app.app_context():
 api = Api(app)      
 api.add_resource(ProfileApi, '/profiles')
 api.add_resource(ProfilesApi, '/profiles/<id>')
+
+with app.app_context():
+    @current_app.before_request
+    def basic_authentication():
+        if request.method.lower() == 'options':
+            return Response()
 
 if __name__ == '__main__':
       app.run()

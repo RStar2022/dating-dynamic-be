@@ -52,9 +52,10 @@ class ProfilesApi(Resource):
             return messages, 400
     
     def get(self, id):
-        #try : 
-            profile_info = Profile.query.filter_by(id=id).first()
-            return jsonify(profile_info.as_dict())
+        profile_info = Profile.query.filter_by(id=id).first()
+        if not profile_info:
+            return "Not found", 404
+        return jsonify(profile_info.as_dict())
 """except Exception as e:
 messages = "Your ID is not saved in database"
 return messages, 400"""
