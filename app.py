@@ -10,7 +10,7 @@ app.config["DEBUG"] = True
 app.config.from_object(Config)
 
 #Define MariaDB engine using MariaDB connector
-app.config['SQLALCHEMY_DATABASE_URI'] ="mariadb+mariadbconnector://dating:password@127.0.0.1:3306/dating"
+app.config['SQLALCHEMY_DATABASE_URI'] ="mysql+mysqlconnector://dating:password@127.0.0.1:3306/dating"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app)
