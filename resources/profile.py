@@ -4,6 +4,7 @@ from database.models import Profile
 from database.db import db
 from datetime import datetime
 from requests import get
+from face_recognizer.detector import FaceDetection
 
 class ProfileApi(Resource):
     def get(self):
@@ -21,11 +22,17 @@ class ProfileApi(Resource):
             req_hobby = body['hobby']
             req_gender = body['gender']
             pic = body['img'].encode("utf-8")
-            data = Profile(name = req_name, date = req_date, occupation = req_occupation, hobby = req_hobby, gender = req_gender, img = pic)
+
+            faces, scores = FaceDetection.face_detection(pic)
+
+            scores = [float(score) for score in scores]
+
+            data = Profile(name = req_name, date = req_date, occupation = req_occupation, 
+                           hobby = req_hobby, gender = req_gender, img = pic)
             db.session.add(data)
             db.session.commit()
             id = data.id
-            return {'id':str(id)}, 200
+            return {'id':str(id),'faces': faces.tolist(), 'scores': scores}, 200
         except Exception as e:
             messages = str(e)
             return messages, 400
@@ -55,9 +62,7 @@ class ProfilesApi(Resource):
         #try : 
             profile_info = Profile.query.filter_by(id=id).first()
             return jsonify(profile_info.as_dict())
-"""except Exception as e:
-messages = "Your ID is not saved in database"
-return messages, 400"""
+
         
 
 
